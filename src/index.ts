@@ -4,7 +4,6 @@ import * as dotenv from "dotenv";
 dotenv.config();
 
 import Environment from "./environment";
-// import router from "./routes";
 
 // import all the required modules
 import * as debug from "debug";

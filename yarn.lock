@@ -944,6 +944,11 @@ error-inject@^1.0.0:
   resolved "https://registry.yarnpkg.com/error-inject/-/error-inject-1.0.0.tgz#e2b3d91b54aed672f309d950d154850fa11d4f37"
   integrity sha1-4rPZG1Su1nLzCdlQ0VSFD6EdTzc=
 
+es6-request@^2.4.0:
+  version "2.4.0"
+  resolved "https://registry.yarnpkg.com/es6-request/-/es6-request-2.4.0.tgz#41c48ea2aa516387dc9ed2f67e9f98bc853fb785"
+  integrity sha512-+v1fI0zVFZtfMxWS14qQ37tFwaFXvoqYQgx8mRs4HvbPNyKsXyIJGkuxNoOC0C2Haq9jYp7GCEen+B9mAMvrMg==
+
 es6-shim@0.35.3:
   version "0.35.3"
   resolved "https://registry.yarnpkg.com/es6-shim/-/es6-shim-0.35.3.tgz#9bfb7363feffff87a6cdb6cd93e405ec3c4b6f26"

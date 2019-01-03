@@ -54,6 +54,7 @@
     "dataloader": "^1.4.0",
     "debug": "^4.1.1",
     "dotenv": "^6.2.0",
+    "es6-request": "^2.4.0",
     "fs-extra": "^7.0.1",
     "ioredis": "^4.3.0",
     "koa": "^2.6.2",

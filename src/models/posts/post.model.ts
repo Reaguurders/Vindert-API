@@ -11,6 +11,7 @@ import {
 } from "sequelize-typescript";
 import BaseModel from "../base";
 import PostTag from "./post-tag.model";
+import PostHistory from "./post-history.model";
 
 @Table({
 	timestamps: true,
@@ -51,6 +52,9 @@ export default class Post extends BaseModel<Post> {
 	@HasMany(() => PostTag)
 	tags: PostTag[];
 
+	@HasMany(() => PostHistory)
+	histories: PostHistory[];
+
 	@Column(DataType.JSON)
 	rawData: object;
 
@@ -59,4 +63,11 @@ export default class Post extends BaseModel<Post> {
 
 	@UpdatedAt
 	updatedAt: Date;
+
+	static parseTags(tagsString: string): string[] {
+		let tags = tagsString.split(" ");
+		let unique = new Set(tags);
+
+		return [...unique];
+	}
 }

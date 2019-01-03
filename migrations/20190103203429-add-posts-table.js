@@ -5,6 +5,7 @@ module.exports = {
 		await queryInterface.createTable("posts", {
 			id: {
 				type: Sequelize.INTEGER,
+				autoIncrement: true,
 				primaryKey: true
 			},
 			dumpertId: {
@@ -47,6 +48,6 @@ module.exports = {
 	},
 
 	down: async (queryInterface, Sequelize) => {
-		await queryInterface.removeTable("posts");
+		await queryInterface.dropTable("posts");
 	}
 };

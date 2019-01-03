@@ -2,7 +2,7 @@
 
 module.exports = {
 	up: async (queryInterface, Sequelize) => {
-		await queryInterface.createTable("postTags", {
+		await queryInterface.createTable("postHistories", {
 			postId: {
 				type: Sequelize.INTEGER,
 				primaryKey: true,
@@ -14,15 +14,27 @@ module.exports = {
 				onDelete: "CASCADE",
 				onUpdate: "CASCADE"
 			},
-			tag: {
-				type: Sequelize.STRING,
+			checkedAt: {
+				type: Sequelize.DATE,
 				primaryKey: true,
+				allowNull: false
+			},
+			views: {
+				type: Sequelize.BIGINT,
+				allowNull: false
+			},
+			kudos: {
+				type: Sequelize.BIGINT,
+				allowNull: false
+			},
+			comments: {
+				type: Sequelize.BIGINT,
 				allowNull: false
 			}
 		})
 	},
 
 	down: async (queryInterface, Sequelize) => {
-		await queryInterface.dropTable("postTags");
+		await queryInterface.dropTable("postHistories");
 	}
 };

@@ -3,7 +3,8 @@ import {
 	Column,
 	PrimaryKey,
 	ForeignKey,
-	BelongsTo
+	BelongsTo,
+	AllowNull
 } from "sequelize-typescript";
 import BaseModel from "../base";
 import Post from "./post.model";
@@ -12,9 +13,9 @@ import Post from "./post.model";
 	timestamps: false,
 	charset: "utf8",
 	collate: "utf8_unicode_ci",
-	tableName: "postTags"
+	tableName: "postHistories"
 })
-export default class PostTag extends BaseModel<PostTag> {
+export default class PostHistory extends BaseModel<PostHistory> {
 	@ForeignKey(() => Post)
 	@PrimaryKey
 	@Column
@@ -25,5 +26,17 @@ export default class PostTag extends BaseModel<PostTag> {
 
 	@PrimaryKey
 	@Column
-	tag: string;
+	checkedAt: Date;
+
+	@AllowNull(false)
+	@Column
+	views: number;
+
+	@AllowNull(false)
+	@Column
+	kudos: number;
+
+	@AllowNull(false)
+	@Column
+	comments: number;
 }
