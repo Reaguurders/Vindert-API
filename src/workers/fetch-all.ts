@@ -29,7 +29,7 @@ const checkPage = async (page) => {
 	let start = Date.now();
 
 	log(`checking page ${page}`);
-	let [body, res] = await request.get(`https://api.dumpert.nl/mobile_api/json/latest/${page}?nsfw=1`);
+	let [body, res] = await request.get(`https://api.dumpert.nl/mobile_api/json/latest/${page}`).header("cookie", "cpc=10; nsfw=1");
 
 	if (res.statusCode !== 200) {
 		log(`status code !== 200`);
