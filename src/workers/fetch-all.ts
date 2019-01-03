@@ -38,7 +38,7 @@ const checkPage = async (page) => {
 
 	let parsed;
 	try {
-		parsed = JSON.parse(body as string);
+		parsed = JSON.parse((body as string).replace(new RegExp("\u0000", "g"), ""));
 
 		if (!parsed.success) {
 			log(`success !== true`);
