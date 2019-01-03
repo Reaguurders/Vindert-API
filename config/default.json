@@ -1,0 +1,26 @@
+{
+	"environment": "development",
+	"http": {
+		"port": 3000,
+		"logLevel": "dev",
+		"origins": [
+			"http://localhost"
+		]
+	},
+	"redis": {
+		"url": "redis://localhost:6379"
+	},
+	"typeorm": {
+		"type": "postgres",
+		"logging": false,
+		"entities": [
+			"dist/entities/**/*.entity.js"
+		],
+		"migrations": [
+			"dist/migrations/**/*.js"
+		],
+		"cli": {
+			"migrationsDir": "src/migrations"
+		}
+	}
+}

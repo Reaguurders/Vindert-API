@@ -1,0 +1,79 @@
+{
+  "name": "vindert-api",
+  "version": "1.0.0",
+  "private": true,
+  "description": "API for Dumpert utilities",
+  "main": "dist/index.js",
+  "scripts": {
+    "migration:generate": "ts-node ./node_modules/typeorm/cli.js migration:generate -n",
+    "migration:run": "ts-node ./node_modules/typeorm/cli.js migration:run",
+    "migration:revert": "ts-node ./node_modules/typeorm/cli.js migration:revert",
+    "postinstall": "npm run build",
+    "start": "npm run serve",
+    "build": "npm run tslint && npm run build-ts",
+    "serve": "node dist/index.js",
+    "watch": "concurrently --default-input-target 1 -r -k -p \"[{name}]\" -n \"TypeScript,Node\" -c \"cyan.bold,green.bold\" \"npm run watch-ts\" \"npm run watch-node\"",
+    "watch-node": "nodemon --delay 5 dist/index.js",
+    "build-ts": "tsc",
+    "watch-ts": "tsc -w",
+    "tslint": "tslint -c tslint.json -p tsconfig.json ./src/**/*.ts",
+    "debug": "npm run build && npm run watch-debug",
+    "serve-debug": "nodemon --inspect dist/index.js",
+    "watch-debug": "concurrently -k -p \"[{name}]\" -n \"TypeScript,Node\" -c \"cyan.bold,green.bold\" \"npm run watch-ts\" \"npm run serve-debug\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Reaguurders/Vindert-API.git"
+  },
+  "keywords": [
+    "dumpert",
+    "vindert"
+  ],
+  "author": "Ruben Rutten <ruben@rubenrutten.nl>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Reaguurders/Vindert-API/issues"
+  },
+  "homepage": "https://github.com/Reaguurders/Vindert-API#readme",
+  "dependencies": {
+    "@koa/cors": "^2.2.3",
+    "@types/config": "^0.0.34",
+    "@types/debug": "^0.0.31",
+    "@types/dotenv": "^6.1.0",
+    "@types/fs-extra": "^5.0.4",
+    "@types/ioredis": "^4.0.4",
+    "@types/koa": "^2.0.48",
+    "@types/koa-helmet": "^3.1.2",
+    "@types/koa-morgan": "^1.0.4",
+    "@types/koa-router": "^7.0.36",
+    "@types/koa__cors": "^2.2.3",
+    "@types/node": "^10.12.18",
+    "@types/pg": "^7.4.11",
+    "accesscontrol": "^2.2.1",
+    "config": "^3.0.1",
+    "dataloader": "^1.4.0",
+    "debug": "^4.1.1",
+    "dotenv": "^6.2.0",
+    "fs-extra": "^7.0.1",
+    "ioredis": "^4.3.0",
+    "koa": "^2.6.2",
+    "koa-body": "^4.0.6",
+    "koa-helmet": "^4.0.0",
+    "koa-morgan": "^1.0.1",
+    "koa-router": "^7.4.0",
+    "make-error": "^1.3.5",
+    "moment": "^2.23.0",
+    "pg": "^7.7.1",
+    "reflect-metadata": "^0.1.12",
+    "typeorm": "^0.2.11",
+    "uuid": "^3.3.2",
+    "validator": "^10.10.0"
+  },
+  "devDependencies": {
+    "concurrently": "^4.1.0",
+    "nodemon": "^1.18.9",
+    "ts-node": "^7.0.1",
+    "tslint": "^5.12.0",
+    "typescript": "^3.2.2"
+  }
+}

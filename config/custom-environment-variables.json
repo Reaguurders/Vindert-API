@@ -1,0 +1,26 @@
+{
+	"environment": "NODE_ENV",
+	"http": {
+		"port": "PORT",
+		"logLevel": "HTTP_LOG_LEVEL",
+		"origins": {
+			"__name": "CORS_ORIGINS",
+			"__format": "json"
+		}
+	},
+	"redis": {
+		"url": "REDIS_URL"
+	},
+	"typeorm": {
+		"url": "DATABASE_URL",
+		"host": "DATABASE_HOST",
+		"port": "DATABASE_PORT",
+		"username": "DATABASE_USER",
+		"password": "DATABASE_PASS",
+		"database": "DATABASE_DB",
+		"logging": {
+			"__name": "DATABASE_LOG",
+			"__format": "json"
+		}
+	}
+}
