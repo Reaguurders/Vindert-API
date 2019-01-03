@@ -11,15 +11,10 @@
 	"redis": {
 		"url": "REDIS_URL"
 	},
-	"typeorm": {
+	"sequelize": {
 		"url": "DATABASE_URL",
-		"host": "DATABASE_HOST",
-		"port": "DATABASE_PORT",
-		"username": "DATABASE_USER",
-		"password": "DATABASE_PASS",
-		"database": "DATABASE_DB",
 		"logging": {
-			"__name": "DATABASE_LOG",
+			"__name": "SEQUELIZE_LOG",
 			"__format": "json"
 		}
 	}

@@ -10,17 +10,11 @@
 	"redis": {
 		"url": "redis://localhost:6379"
 	},
-	"typeorm": {
-		"type": "postgres",
+	"sequelize": {
+		"dialect": "postgres",
+		"modelPaths": ["../models/**/*.model.js"],
 		"logging": false,
-		"entities": [
-			"dist/entities/**/*.entity.js"
-		],
-		"migrations": [
-			"dist/migrations/**/*.js"
-		],
-		"cli": {
-			"migrationsDir": "src/migrations"
-		}
+		"operatorsAliases": false,
+		"timezone": "Europe/Amsterdam"
 	}
 }

@@ -18,7 +18,7 @@ import Router from "./routes";
 import { AppError } from "./errors/app.error";
 
 // initialize the database connection
-import "./core/typeorm";
+import "./core/sequelize";
 
 const app = new Koa();
 const log = debug("app:http");

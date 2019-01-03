@@ -65,7 +65,8 @@
     "moment": "^2.23.0",
     "pg": "^7.7.1",
     "reflect-metadata": "^0.1.12",
-    "typeorm": "^0.2.11",
+    "sequelize": "^4.42.0",
+    "sequelize-typescript": "^0.6.6",
     "uuid": "^3.3.2",
     "validator": "^10.10.0"
   },
