@@ -3,6 +3,7 @@ import * as debug from "debug";
 
 import Environment from "../environment";
 import Post from "../models/posts/post.model";
+import { sequelize } from "../core/sequelize";
 
 const log = debug("app:routes:status");
 
@@ -11,7 +12,19 @@ const router = new Router();
 router.get("/", async (ctx) => {
 	log(`getting api status`);
 
-	let count = await Post.count();
+	let [postCount, uniqueTags, mostUsed] = await Promise.all([
+		Post.count(),
+		sequelize.query(`
+			SELECT COUNT(DISTINCT tag) AS "count" FROM "postTags"
+		`, {
+			type: sequelize.QueryTypes.SELECT
+		}),
+		sequelize.query(`
+			SELECT COUNT("postId") AS "count", "tag" FROM "postTags" GROUP BY "tag" ORDER BY "count" DESC LIMIT 20
+		`, {
+			type: sequelize.QueryTypes.SELECT
+		})
+	]);
 
 	ctx.status = 200;
 	ctx.body = {
@@ -19,7 +32,11 @@ router.get("/", async (ctx) => {
 		data: {
 			version: Environment.getPackage().version,
 			posts: {
-				count
+				count: postCount
+			},
+			tags: {
+				uniqueCount: uniqueTags[0].count,
+				mostUsed: mostUsed
 			}
 		}
 	};
