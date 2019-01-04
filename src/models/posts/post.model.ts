@@ -7,7 +7,8 @@ import {
 	AutoIncrement,
 	DataType,
 	AllowNull,
-	HasMany
+	HasMany,
+	AfterUpdate
 } from "sequelize-typescript";
 import BaseModel from "../base";
 import PostTag from "./post-tag.model";
@@ -82,5 +83,23 @@ export default class Post extends BaseModel<Post> {
 		let unique = new Set(tags);
 
 		return [...unique];
+	}
+
+	@AfterUpdate
+	static async updateSearchable(post: Post, options: any): Promise<Post> {
+		await post.sequelize.query(`
+			UPDATE "posts" SET "searchable" = to_tsvector(
+				'dutch',
+				title || ' ' || description || ' ' || :tags
+			)
+			WHERE id = :id
+		`, {
+			replacements: {
+				id: post.id,
+				tags: (post.tags || []).map(t => t.tag).join(" ")
+			}
+		});
+
+		return post;
 	}
 }
