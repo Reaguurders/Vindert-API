@@ -9,7 +9,7 @@ module.exports = {
 				"posts"
 			SET
 				"searchable" = to_tsvector(
-					'dutch',
+					'simple',
 					title || ' ' || description || ' ' || COALESCE((
 						SELECT
 							string_agg(tag, ' ')
