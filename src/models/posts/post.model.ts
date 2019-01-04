@@ -8,7 +8,8 @@ import {
 	DataType,
 	AllowNull,
 	HasMany,
-	AfterUpdate
+	AfterUpdate,
+	AfterCreate
 } from "sequelize-typescript";
 import BaseModel from "../base";
 import PostTag from "./post-tag.model";
@@ -85,6 +86,7 @@ export default class Post extends BaseModel<Post> {
 		return [...unique];
 	}
 
+	@AfterCreate
 	@AfterUpdate
 	static async updateSearchable(post: Post, options: any): Promise<Post> {
 		await post.sequelize.query(`
