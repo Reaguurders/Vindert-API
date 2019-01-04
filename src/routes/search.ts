@@ -20,7 +20,7 @@ router.get("/", async (ctx) => {
 	let posts = await Post.findAll({
 		attributes: {
 			include: [
-				sequelize.literal(`ts_rank("searchable", plainto_tsquery('dutch', ${sequelize.escape(ctx.query.q)})) AS "rank"`)
+				sequelize.literal(`ts_rank("searchable", websearch_to_tsquery('dutch', ${sequelize.escape(ctx.query.q)})) AS "rank"`)
 			],
 			exclude: [
 				"rawData",
@@ -30,7 +30,7 @@ router.get("/", async (ctx) => {
 		},
 		where: {
 			[Op.and]: [
-				sequelize.literal(`"searchable" @@ plainto_tsquery('dutch', ${sequelize.escape(ctx.query.q)})`)
+				sequelize.literal(`"searchable" @@ websearch_to_tsquery('dutch', ${sequelize.escape(ctx.query.q)})`)
 			]
 		},
 		order: [
