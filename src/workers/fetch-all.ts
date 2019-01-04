@@ -65,6 +65,22 @@ const checkPage = async (page) => {
 		let transaction = await sequelize.transaction();
 
 		await Promise.all(newItems.map(post => {
+			const counts = post.media.reduce((acc, curr) => {
+				switch (curr.mediatype) {
+					case "VIDEO":
+						acc.videoCount++;
+						break;
+					case "FOTO":
+						acc.imageCount++;
+						break;
+					case "AUDIO":
+						acc.audioCount++;
+						break;
+				}
+
+				return acc;
+			}, { videoCount: 0, imageCount: 0, audioCount: 0});
+
 			return new Post({
 				dumpertId: post.id,
 				title: post.title,
@@ -74,6 +90,7 @@ const checkPage = async (page) => {
 				nsfw: post.nsfw,
 				rawData: post,
 				tags: Post.parseTags(post.tags).map(tag => ({ tag })),
+				...counts,
 				histories: [{
 					checkedAt,
 					views: post.stats.views_total,

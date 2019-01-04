@@ -9,12 +9,27 @@ import {
 	AllowNull,
 	HasMany,
 	AfterUpdate,
-	AfterCreate
+	AfterCreate,
+	DefaultScope
 } from "sequelize-typescript";
 import BaseModel from "../base";
 import PostTag from "./post-tag.model";
 import PostHistory from "./post-history.model";
 
+@DefaultScope({
+	attributes: [
+		"id",
+		"dumpertId",
+		"title",
+		"description",
+		"thumbnail",
+		"postedAt",
+		"nsfw",
+		"videoCount",
+		"imageCount",
+		"audioCount"
+	]
+})
 @Table({
 	timestamps: true,
 	charset: "utf8",
@@ -89,6 +104,8 @@ export default class Post extends BaseModel<Post> {
 	@AfterCreate
 	@AfterUpdate
 	static async updateSearchable(post: Post, options: any): Promise<Post> {
+		let transaction = options.transaction;
+
 		await post.sequelize.query(`
 			UPDATE "posts" SET "searchable" = to_tsvector(
 				'dutch',
@@ -99,7 +116,8 @@ export default class Post extends BaseModel<Post> {
 			replacements: {
 				id: post.id,
 				tags: (post.tags || []).map(t => t.tag).join(" ")
-			}
+			},
+			transaction
 		});
 
 		return post;
