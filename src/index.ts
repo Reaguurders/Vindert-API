@@ -73,13 +73,20 @@ app.use(async (ctx, next) => {
 app.use(helmet());
 app.use(cors({
 	origin: (ctx) => {
+		if (ctx.request.header.origin) {
+			return ctx.request.header.origin;
+		}
+
+		return "*";
+
+		/*
 		const domains = Environment.config.get("http.origins") as string[];
 
 		if (domains.indexOf(ctx.request.header.origin) !== -1) {
 			return ctx.request.header.origin;
 		}
 
-		return domains[0];
+		return domains[0];*/
 	}
 }));
 

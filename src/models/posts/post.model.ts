@@ -108,7 +108,7 @@ export default class Post extends BaseModel<Post> {
 
 		await post.sequelize.query(`
 			UPDATE "posts" SET "searchable" = to_tsvector(
-				'dutch',
+				'dutch_nostop',
 				title || ' ' || description || ' ' || :tags
 			)
 			WHERE id = :id
