@@ -58,6 +58,15 @@ export default class Post extends BaseModel<Post> {
 	@Column(DataType.JSON)
 	rawData: object;
 
+	@Column
+	videoCount: number;
+
+	@Column
+	imageCount: number;
+
+	@Column
+	audioCount: number;
+
 	@CreatedAt
 	createdAt: Date;
 
@@ -65,6 +74,10 @@ export default class Post extends BaseModel<Post> {
 	updatedAt: Date;
 
 	static parseTags(tagsString: string): string[] {
+		if (tagsString === "") {
+			return [];
+		}
+
 		let tags = tagsString.split(" ");
 		let unique = new Set(tags);
 
