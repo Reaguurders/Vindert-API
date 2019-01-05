@@ -12,6 +12,7 @@ import { Op } from "sequelize";
 
 // initialize the database
 import "../core/sequelize";
+import "../core/redis";
 
 import Post from "../models/posts/post.model";
 import PostTag from "../models/posts/post-tag.model";
