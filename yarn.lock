@@ -2677,6 +2677,11 @@ sax@^1.2.4:
   resolved "https://registry.yarnpkg.com/sax/-/sax-1.2.4.tgz#2816234e2378bddc4e5354fab5caa895df7100d9"
   integrity sha512-NqVDv9TpANUjFm0N8uM5GxL36UgKi9/atZw+x7YFnQ8ckwFGKrl4xX4yWtrey3UJm5nP1kUbnYgLopqWNSRhWw==
 
+search-query-parser@^1.4.1:
+  version "1.4.1"
+  resolved "https://registry.yarnpkg.com/search-query-parser/-/search-query-parser-1.4.1.tgz#59446506d58cc3f01f32f8014a269cf4e77adad6"
+  integrity sha512-t/TuFHA6NemejFEbCUWggKEV5PhVDfkz1at9Ym13Cb9PqX9MQ2TWZBzqRCEuOcxreyTPEh+VqQc1ilIZN0K+tg==
+
 semver-diff@^2.0.0:
   version "2.1.0"
   resolved "https://registry.yarnpkg.com/semver-diff/-/semver-diff-2.1.0.tgz#4bbb8437c8d37e4b0cf1a68fd726ec6d645d6d36"
