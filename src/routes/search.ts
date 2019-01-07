@@ -1,10 +1,7 @@
 import * as Router from "koa-router";
 import * as debug from "debug";
 
-import Post from "../models/posts/post.model";
 import { sequelize } from "../core/sequelize";
-import { Op } from "sequelize";
-import PostTag from "../models/posts/post-tag.model";
 import { AppError } from "../errors/app.error";
 import moment = require("moment");
 
