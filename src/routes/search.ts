@@ -129,11 +129,11 @@ router.get("/", async (ctx) => {
 	let sort = ctx.query.sort || parsed.sort || parsed.sorteren;
 	if (sort) {
 		let direction = "desc";
-		if (sort.indexOf("+")) {
+		if (sort.indexOf(">") !== -1) {
 			direction = "asc";
 		}
 
-		sort = sort.replace(/\+|\-/g, "");
+		sort = sort.replace(/\<|\>/g, "");
 
 		if (["score", "date", "datum", "kudos", "views", "comments", "reaguursels"].indexOf(sort) !== -1) {
 			if (sort === "datum") {
@@ -143,6 +143,13 @@ router.get("/", async (ctx) => {
 			}
 
 			options.sort = [sort, direction];
+		}
+	}
+
+	if (ctx.query.page) {
+		options.page = parseInt(ctx.query.page, 10);
+		if (Number.isNaN(options.page) || options.page < 0) {
+			options.page = 0;
 		}
 	}
 
@@ -184,6 +191,7 @@ router.get("/", async (ctx) => {
 
 	const results = await sequelize.query(`
 		SELECT
+			COUNT(p."id") OVER() AS "fullCount",
 			p."id",
 			p."dumpertId",
 			p."title",
@@ -230,7 +238,7 @@ router.get("/", async (ctx) => {
 		ORDER BY
 			${order}
 		LIMIT 30
-		OFFSET 0
+		OFFSET ${options.page * 30}
 	`, {
 		type: sequelize.QueryTypes.SELECT,
 		replacements: {
@@ -240,13 +248,20 @@ router.get("/", async (ctx) => {
 		}
 	});
 
+	let pages = 0;
+	if (results.length > 0) {
+		pages = Math.ceil(results[0].fullCount / 30);
+	}
+
 	ctx.status = 200;
 	ctx.body = {
 		success: true,
 		options,
+		pages,
 		data: results.map(row => ({
 			...row,
-			tags: row.tags.split(",")
+			fullCount: undefined,
+			tags: (row.tags && row.tags.split(",")) || []
 		}))
 	};
 });
