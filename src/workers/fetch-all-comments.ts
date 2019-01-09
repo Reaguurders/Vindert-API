@@ -42,7 +42,7 @@ const getPosts = async () => {
 			p."postedAt" < '2019-01-01' AND
 			ph."comments" = -1
 		ORDER BY
-			p."postedAt" ASC
+			p."postedAt" DESC
 		LIMIT 400
 	`, {
 		type: sequelize.QueryTypes.SELECT

@@ -259,8 +259,10 @@ router.get("/", async (ctx) => {
 	});
 
 	let pages = 0;
+	let total = 0;
 	if (results.length > 0) {
 		pages = Math.ceil(results[0].fullCount / 30);
+		total = results[0].fullCount;
 	}
 
 	ctx.status = 200;
@@ -268,6 +270,7 @@ router.get("/", async (ctx) => {
 		success: true,
 		options,
 		pages,
+		total,
 		data: results.map(row => ({
 			...row,
 			fullCount: undefined,
