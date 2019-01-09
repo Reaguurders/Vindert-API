@@ -78,9 +78,17 @@ router.get("/", async (ctx) => {
 		}
 	}
 	if (type.length > 0) {
-		const types = ["video", "image", "audio", "foto"];
+		const types = ["video", "image", "audio", "foto", "plaatje"];
 		if (type.every(t => types.indexOf(t) !== -1)) {
-			options.type = type.map(t => t === "foto" ? "image" : t);
+			options.type = type.map(t => {
+				if (t === "foto") {
+					return "image";
+				} else if (t === "plaatje") {
+					return "image";
+				}
+
+				return t;
+			});
 		}
 	}
 
