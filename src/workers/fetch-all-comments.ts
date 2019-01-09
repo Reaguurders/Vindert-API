@@ -1,3 +1,7 @@
+// Used to fetch all the comments of all posts in the database
+// Only used to fetch the result for old posts, because data should be
+// accurate and the comment count can't change for posts where can comment is false
+
 import "reflect-metadata";
 import * as dotenv from "dotenv";
 dotenv.config();
@@ -38,7 +42,7 @@ const getPosts = async () => {
 			p."postedAt" < '2019-01-01' AND
 			ph."comments" = -1
 		ORDER BY
-			p."postedAt" DESC
+			p."postedAt" ASC
 		LIMIT 400
 	`, {
 		type: sequelize.QueryTypes.SELECT
@@ -58,6 +62,26 @@ const fetchComments = async (post) => {
 
 		if (body.includes("Article not found")) {
 			log(`post (no longer) found`);
+			PostHistory.update({
+				comments: 0
+			}, {
+				where: {
+					postId: {
+						[Op.eq]: post.id
+					},
+					checkedAt: {
+						[Op.eq]: post.checkedAt
+					}
+				}
+			}).catch((err) => {
+				throw err;
+			});
+
+			return;
+		}
+
+		if (body.includes("CRC check failed")) {
+			log(`post crc check failed`);
 			PostHistory.update({
 				comments: 0
 			}, {

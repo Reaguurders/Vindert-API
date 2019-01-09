@@ -126,6 +126,7 @@ router.get("/", async (ctx) => {
 		}
 	}
 
+	// parse sort
 	let sort = ctx.query.sort || parsed.sort || parsed.sorteren;
 	if (sort) {
 		let direction = "desc";
@@ -140,6 +141,10 @@ router.get("/", async (ctx) => {
 				sort = "date";
 			} else if (sort === "reaguursels") {
 				sort = "comments";
+			}
+
+			if (sort === "date") {
+				sort = "postedAt";
 			}
 
 			options.sort = [sort, direction];
@@ -164,7 +169,7 @@ router.get("/", async (ctx) => {
 		where.push(`p."nsfw" = ${options.nsfw}`);
 	}
 
-	if (options.type.length > 0) {
+	if (options.type.length > 0 && options.type.length !== 3) {
 		where.push(`((${options.type.map(t => {
 			return `p."${t}Count" > 0`;
 		}).join(`) OR (`)}))`);
@@ -180,17 +185,30 @@ router.get("/", async (ctx) => {
 
 	where.push(`"searchable" @@ websearch_to_tsquery('dutch_nostop', :query)`);
 
-	let order;
+	let orderColumn;
+	let orderDirection;
 	switch (options.sort[0]) {
-		case "date":
-			order = `p."postedAt" ${options.sort[1]}`;
+		case "score":
+			orderColumn = `"score"`;
 			break;
-		default:
-			order = `"${options.sort[0]}" ${options.sort[1]}`;
+		case "postedAt":
+			orderColumn = `p."postedAt"`;
+			break;
+		case "kudos":
+			orderColumn = `ph."kudos"`;
+			break;
+		case "views":
+			orderColumn = `ph."views"`;
+			break;
+		case "comments":
+			orderColumn = `ph."comments"`;
+			break;
 	}
+	orderDirection = options.sort[1];
 
 	const results = await sequelize.query(`
 		SELECT
+			DISTINCT ON (${orderColumn}, p."id") p."id",
 			COUNT(p."id") OVER() AS "fullCount",
 			p."id",
 			p."dumpertId",
@@ -214,29 +232,21 @@ router.get("/", async (ctx) => {
 			ON
 				pt."postId" = p."id"
 		LEFT JOIN
-			(
-				SELECT
-					DISTINCT ON("postId") "postId",
-					"views",
-					"kudos",
-					"comments"
-				FROM
-					"postHistories"
-				ORDER BY
-					"postId" DESC,
-					"checkedAt" DESC
-			) ph
+			"postHistories" ph
 			ON
 				ph."postId" = p."id"
 		WHERE
 			${where.join(" AND\n")}
 		GROUP BY
 			p."id",
+			ph."checkedAt",
 			ph."views",
 			ph."kudos",
 			ph."comments"
 		ORDER BY
-			${order}
+			${orderColumn} ${orderDirection},
+			p."id" ASC,
+			ph."checkedAt" DESC
 		LIMIT 30
 		OFFSET ${options.page * 30}
 	`, {
