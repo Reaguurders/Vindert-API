@@ -124,7 +124,6 @@ const fetchComments = async (post) => {
 			}
 
 			for (const post of posts) {
-				console.log(post);
 				await fetchComments(post);
 			}
 		} catch (err) {
