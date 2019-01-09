@@ -169,7 +169,7 @@ router.get("/", async (ctx) => {
 	// build the query
 	let score;
 	if (options.sort[0] === "score") {
-		score = `ts_rank(p."searchable", websearch_to_tsquery('dutch_nostop', :query)) AS "score"`;
+		score = `ts_rank(p."searchable", websearch_to_tsquery('dutch_nostop', :query), 1) AS "score"`;
 	}
 
 	let where = [];
