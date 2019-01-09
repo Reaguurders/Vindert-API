@@ -37,6 +37,8 @@ const getPosts = async () => {
 		WHERE
 			p."postedAt" < '2019-01-01' AND
 			ph."comments" = 0
+		ORDER BY
+			p."postedAt" ASC
 		LIMIT 400
 	`, {
 		type: sequelize.QueryTypes.SELECT
