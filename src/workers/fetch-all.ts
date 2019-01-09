@@ -96,7 +96,7 @@ const checkPage = async (page) => {
 					checkedAt,
 					views: post.stats.views_total,
 					kudos: post.stats.kudos_total,
-					comments: 0
+					comments: -1
 				}]
 			}, {
 				include: [{

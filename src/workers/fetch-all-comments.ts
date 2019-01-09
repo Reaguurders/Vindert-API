@@ -36,9 +36,9 @@ const getPosts = async () => {
 				ph."postId" = p."id"
 		WHERE
 			p."postedAt" < '2019-01-01' AND
-			ph."comments" = 0
+			ph."comments" = -1
 		ORDER BY
-			p."postedAt" ASC
+			p."postedAt" DESC
 		LIMIT 400
 	`, {
 		type: sequelize.QueryTypes.SELECT
@@ -59,7 +59,7 @@ const fetchComments = async (post) => {
 		if (body.includes("Article not found")) {
 			log(`post (no longer) found`);
 			PostHistory.update({
-				comments: -1
+				comments: 0
 			}, {
 				where: {
 					postId: {
