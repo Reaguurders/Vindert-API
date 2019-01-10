@@ -61,7 +61,7 @@ updaterQueue.process("newPosts", async (job) => {
 			throw new Error("Response not valid JSON");
 		}
 
-		const checkedAt = new Date();
+		const checkedAt = Math.round(Date.now() / 1000);
 
 		let existingItems = await Post.findAll({
 			attributes: ["id", "dumpertId"],
@@ -112,7 +112,7 @@ updaterQueue.process("newPosts", async (job) => {
 				tags: Post.parseTags(post.tags).map(tag => ({ tag })),
 				...counts,
 				histories: [{
-					checkedAt,
+					checkedAt: sequelize.fn("TO_TIMESTAMP", checkedAt),
 					views: 0,
 					kudos: 0,
 					comments: 0
