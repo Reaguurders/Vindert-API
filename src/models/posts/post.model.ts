@@ -10,7 +10,8 @@ import {
 	HasMany,
 	AfterUpdate,
 	AfterCreate,
-	DefaultScope
+	DefaultScope,
+	DeletedAt
 } from "sequelize-typescript";
 import BaseModel from "../base";
 import PostTag from "./post-tag.model";
@@ -32,6 +33,7 @@ import PostHistory from "./post-history.model";
 })
 @Table({
 	timestamps: true,
+	paranoid: true,
 	charset: "utf8",
 	collate: "utf8_unicode_ci",
 	tableName: "posts"
@@ -89,6 +91,9 @@ export default class Post extends BaseModel<Post> {
 
 	@UpdatedAt
 	updatedAt: Date;
+
+	@DeletedAt
+	deletedAt?: Date;
 
 	static parseTags(tagsString: string): string[] {
 		if (tagsString === "") {

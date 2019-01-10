@@ -24,7 +24,7 @@ router.get("/", async (ctx) => {
 		query: null,
 		before: null,
 		after: null,
-		sort: ["postedAt", "desc"],
+		sort: ["date", "desc"],
 		page: 0
 	};
 
@@ -80,7 +80,7 @@ router.get("/", async (ctx) => {
 	if (type.length > 0) {
 		const types = ["video", "image", "audio", "foto", "plaatje"];
 		if (type.every(t => types.indexOf(t) !== -1)) {
-			options.type = type.map(t => {
+			options.type = [...new Set(type.map(t => {
 				if (t === "foto") {
 					return "image";
 				} else if (t === "plaatje") {
@@ -88,7 +88,7 @@ router.get("/", async (ctx) => {
 				}
 
 				return t;
-			});
+			}))];
 		}
 	}
 
@@ -151,10 +151,6 @@ router.get("/", async (ctx) => {
 				sort = "comments";
 			}
 
-			if (sort === "date") {
-				sort = "postedAt";
-			}
-
 			options.sort = [sort, direction];
 		}
 	}
@@ -199,7 +195,7 @@ router.get("/", async (ctx) => {
 		case "score":
 			orderColumn = `"score"`;
 			break;
-		case "postedAt":
+		case "date":
 			orderColumn = `p."postedAt"`;
 			break;
 		case "kudos":
