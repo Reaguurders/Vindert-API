@@ -42,7 +42,10 @@ app.use(async (ctx, next) => {
 		if (err instanceof AppError || Environment.isDevelopment()) {
 			ctx.body = {
 				success: false,
-				error: err
+				error: {
+					...err,
+					stack: undefined
+				}
 			};
 		} else {
 			ctx.body = {
