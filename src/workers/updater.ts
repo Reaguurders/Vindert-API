@@ -30,7 +30,7 @@ const updaterQueue = new Queue("updater", Environment.config.get("redis.url"), {
 		removeOnFail: true
 	},
 	limiter: {
-		max: 400,
+		max: 380,
 		duration: 60000
 	}
 });
