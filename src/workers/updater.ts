@@ -187,7 +187,8 @@ updaterQueue.process("updateStats", async (job) => {
 		SELECT
 			i."postId",
 			EXTRACT(epoch FROM i."checkedAt") AS "checkedAt",
-			p."dumpertId"
+			p."dumpertId",
+			p."postedAt"
 		FROM
 			inserts i
 		LEFT JOIN
@@ -204,7 +205,8 @@ updaterQueue.process("updateStats", async (job) => {
 		await updaterQueue.add("fetchStats", {
 			id: row.postId,
 			dumpertId: row.dumpertId,
-			checkedAt: row.checkedAt
+			checkedAt: row.checkedAt,
+			postedAt: row.postedAt
 		});
 	}
 });
@@ -248,7 +250,35 @@ updaterQueue.process("fetchStats", async (job) => {
 			return parsed.items[0];
 		})(),
 		(async () => {
-			let [body, res] = await request.get(`https://comments.dumpert.nl/api/v1.0/articles/${job.data.dumpertId.replace("_", "/")}/comments/?includeitems=0`).header("cookie", "cpc=10; nsfw=1");
+			let previousCheck = await PostHistory.findOne({
+				where: {
+					[Op.and]: [
+						{
+							postId: {
+								[Op.eq]: job.data.id
+							}
+						},
+						sequelize.literal(`EXTRACT(epoch FROM "checkedAt") < ${job.data.checkedAt}`)
+					]
+				},
+				order: [
+					["checkedAt", "DESC"]
+				]
+			});
+
+			let includeItems = 0;
+
+			if (previousCheck && moment(previousCheck.checkedAt).isAfter(moment(job.data.postedAt).add(3, "days"))) {
+				log(`comments closed, no longer updated`);
+
+				if (previousCheck.comments > 0) {
+					return previousCheck.comments;
+				}
+
+				includeItems = 1;
+			}
+
+			let [body, res] = await request.get(`https://comments.dumpert.nl/api/v1.0/articles/${job.data.dumpertId.replace("_", "/")}/comments/?includeitems=${includeItems}`).header("cookie", "cpc=10; nsfw=1");
 
 			if (res.statusCode !== 200) {
 				log(`status code !== 200`);
@@ -265,7 +295,7 @@ updaterQueue.process("fetchStats", async (job) => {
 					return 0;
 				}
 
-				throw new Error("API returned error");
+				return 0;
 			}
 
 			let parsed;
@@ -274,15 +304,20 @@ updaterQueue.process("fetchStats", async (job) => {
 
 				if (parsed.status !== "success") {
 					log(`status !== "success"`);
-					throw new Error(`API returned insuccessful ${JSON.stringify(parsed, null, 2)}`);
+
+					return 0;
 				}
 			} catch (err) {
 				log(`api response not valid json`);
 
-				throw new Error("Response not valid JSON");
+				return 0;
 			}
 
-			return parsed.summary.comment_count;
+			if (includeItems) {
+				return parsed.data.comments.length;
+			} else {
+				return parsed.summary.comment_count;
+			}
 		})()
 	]);
 
