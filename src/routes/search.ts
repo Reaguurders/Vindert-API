@@ -165,26 +165,26 @@ router.get("/", async (ctx) => {
 	// build the query
 	let score;
 	if (options.sort[0] === "score") {
-		score = `ts_rank(p."searchable", websearch_to_tsquery('dutch_nostop', :query), 1) AS "score"`;
+		score = `ts_rank("searchable", websearch_to_tsquery('dutch_nostop', :query), 1) AS "score"`;
 	}
 
-	let where = [];
+	let where = [`"deletedAt" IS NULL`];
 	if (options.nsfw !== null) {
-		where.push(`p."nsfw" = ${options.nsfw}`);
+		where.push(`"nsfw" = ${options.nsfw}`);
 	}
 
 	if (options.type.length > 0 && options.type.length !== 3) {
 		where.push(`((${options.type.map(t => {
-			return `p."${t}Count" > 0`;
+			return `"${t}Count" > 0`;
 		}).join(`) OR (`)}))`);
 	}
 
 	if (options.before) {
-		where.push(`p."postedAt" < :before`);
+		where.push(`"postedAt" < :before`);
 	}
 
 	if (options.after) {
-		where.push(`p."postedAt" > :after`);
+		where.push(`"postedAt" > :after`);
 	}
 
 	where.push(`"searchable" @@ websearch_to_tsquery('dutch_nostop', :query)`);
@@ -196,63 +196,87 @@ router.get("/", async (ctx) => {
 			orderColumn = `"score"`;
 			break;
 		case "date":
-			orderColumn = `p."postedAt"`;
+			orderColumn = `"postedAt"`;
 			break;
 		case "kudos":
-			orderColumn = `ph."kudos"`;
+			orderColumn = `"kudos"`;
 			break;
 		case "views":
-			orderColumn = `ph."views"`;
+			orderColumn = `"views"`;
 			break;
 		case "comments":
-			orderColumn = `ph."comments"`;
+			orderColumn = `"comments"`;
 			break;
 	}
 	orderDirection = options.sort[1];
 
 	const results = await sequelize.query(`
 		SELECT
-			DISTINCT ON (${orderColumn}, p."id") p."id",
-			COUNT(p."id") OVER() AS "fullCount",
 			p."id",
+			p1."fullCount",
 			p."dumpertId",
 			p."title",
 			p."description",
 			p."thumbnail",
-			p."postedAt",
 			p."nsfw",
 			p."videoCount",
 			p."imageCount",
-			p."audioCount"${score ? `,
-			${score}` : ""},
-			string_agg(pt."tag", ',') AS "tags",
-			ph."views",
-			ph."kudos",
-			ph."comments"
+			p."audioCount",
+			p1."postedAt",
+			p1."views",
+			p1."kudos",
+			p1."comments"${score ? `,
+			p1."score"` : ""},
+			string_agg(pt."tag", ',') AS "tags"
 		FROM
+			(
+				SELECT
+					p2.*,
+					COUNT("id") OVER() AS "fullCount"
+				FROM
+					(
+						SELECT
+							DISTINCT ON("id") "id",
+							"postedAt"${score ? `,
+							${score}` : ""},
+							ph."views",
+							ph."kudos",
+							ph."comments"
+						FROM
+							"posts"
+						LEFT JOIN
+							"postHistories" ph
+							ON
+								ph."postId" = "id"
+						WHERE
+							${where.join(" AND\n")}
+						ORDER BY
+							"id",
+							ph."checkedAt" DESC
+					) p2
+				ORDER BY
+					${orderColumn} ${orderDirection}
+				LIMIT 30
+				OFFSET ${options.page * 30}
+			) p1
+		JOIN
 			"posts" p
+			ON
+				p."id" = p1."id"
 		LEFT JOIN
 			"postTags" pt
 			ON
 				pt."postId" = p."id"
-		LEFT JOIN
-			"postHistories" ph
-			ON
-				ph."postId" = p."id"
-		WHERE
-			${where.join(" AND\n")}
 		GROUP BY
 			p."id",
-			ph."checkedAt",
-			ph."views",
-			ph."kudos",
-			ph."comments"
+			p1."fullCount",
+			p1."postedAt",
+			p1."views",
+			p1."kudos",
+			p1."comments"${score ? `,
+			p1."score"` : ""}
 		ORDER BY
-			${orderColumn} ${orderDirection},
-			p."id" ASC,
-			ph."checkedAt" DESC
-		LIMIT 30
-		OFFSET ${options.page * 30}
+			${orderColumn} ${orderDirection}
 	`, {
 		type: sequelize.QueryTypes.SELECT,
 		replacements: {
