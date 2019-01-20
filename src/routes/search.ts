@@ -95,18 +95,8 @@ router.get("/", async (ctx) => {
 	// parse before
 	let before = ctx.query.before || parsed.before || parsed.voor;
 	if (before) {
-		// check for full date
-		let date = moment(before, "DD-MM-YYYY");
-
-		// check for month and year
-		if (!date.isValid()) {
-			date = moment(before, "MM-YYYY");
-		}
-
-		// check for only year
-		if (!date.isValid()) {
-			date = moment(before, "YYYY");
-		}
+		// check for date formats
+		let date = moment(before, ["YYYY", "MM-YYYY", "DD-MM-YYYY"]);
 
 		if (date.isValid()) {
 			options.before = date;
@@ -116,18 +106,8 @@ router.get("/", async (ctx) => {
 	// parse after
 	let after = ctx.query.after || parsed.after || parsed.na;
 	if (after) {
-		// check for full date
-		let date = moment(after, "DD-MM-YYYY");
-
-		// check for month and year
-		if (!date.isValid()) {
-			date = moment(after, "MM-YYYY");
-		}
-
-		// check for only year
-		if (!date.isValid()) {
-			date = moment(after, "YYYY");
-		}
+		// check for date formats
+		let date = moment(after, ["YYYY", "MM-YYYY", "DD-MM-YYYY"]);
 
 		if (date.isValid()) {
 			options.after = date;
