@@ -60,6 +60,18 @@ router.get("/:postId", async (ctx) => {
 				["histories", "checkedAt", "ASC"]
 			]
 		});
+
+		let index = ctx.scope.post.histories.length - 1;
+
+		if (index >= 0) {
+			ctx.scope.post.views = ctx.scope.post.histories[index].views;
+			ctx.scope.post.kudos = ctx.scope.post.histories[index].kudos;
+			ctx.scope.post.comments = ctx.scope.post.histories[index].comments;
+		} else {
+			ctx.scope.post.views = 0;
+			ctx.scope.post.kudos = 0;
+			ctx.scope.post.comments = 0;
+		}
 	}
 
 	let data = ctx.scope.post.get({ plain: true });
