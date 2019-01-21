@@ -18,14 +18,15 @@ import { AppError } from "./errors/app.error";
 
 // initialize the database connection
 import "./core/sequelize";
+import Post from "./models/posts/post.model";
 
 const app = new Koa();
 const log = debug("app:http");
 
 declare module "koa" {
-	interface Context {
+	export interface Context {
 		scope: {
-
+			post?: Post
 		};
 	}
 }

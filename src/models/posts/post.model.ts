@@ -86,6 +86,15 @@ export default class Post extends BaseModel<Post> {
 	@Column
 	audioCount: number;
 
+	@Column(DataType.VIRTUAL)
+	views: number;
+
+	@Column(DataType.VIRTUAL)
+	kudos: number;
+
+	@Column(DataType.VIRTUAL)
+	comments: number;
+
 	@CreatedAt
 	createdAt: Date;
 
