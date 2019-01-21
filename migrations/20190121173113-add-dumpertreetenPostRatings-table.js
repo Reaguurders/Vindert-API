@@ -34,6 +34,10 @@ module.exports = {
 				},
 				onDelete: "CASCADE",
 				onUpdate: "CASCADE"
+			},
+			amount: {
+				type: Sequelize.DOUBLE,
+				allowNull: false
 			}
 		});
 	},
