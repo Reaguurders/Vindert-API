@@ -338,11 +338,20 @@ updaterQueue.process("fetchStats", async (job) => {
 	let removeTags = existing.tags.filter(t => tags.indexOf(t.tag) === -1);
 
 	if (addTags.length > 0) {
-		await existing.$add("tags", addTags.map(tag => new PostTag({ tag })));
+		await PostTag.bulkCreate(addTags.map(tag => ({ postId: existing.id, tag })));
 	}
 
 	if (removeTags.length > 0) {
-		await existing.$remove("tag", removeTags);
+		await PostTag.destroy({
+			where: {
+				postId: {
+					[Op.eq]: existing.id
+				},
+				tag: {
+					[Op.in]: removeTags.map(tag => tag.tag)
+				}
+			}
+		});
 	}
 
 	const counts = post.media.reduce((acc, curr) => {
